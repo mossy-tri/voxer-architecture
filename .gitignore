@@ -1,2 +1,5 @@
 # Claude Code settings
 .claude/
+
+# Obsidian workspace settings
+.obsidian/
