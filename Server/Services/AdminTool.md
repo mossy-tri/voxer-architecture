@@ -1,197 +1,44 @@
 # Admin Tool
 
+**Repository**: `https://github.com/voxer/server`
+**Location**: `admin_tool.js` and `admin_tool_views/`
+
 ## Overview
 
-The Admin Tool is an internal web-based interface for Voxer operations, support, and engineering teams. It provides administrative controls, user management, debugging tools, and operational dashboards.
+The Admin Tool is an internal web-based interface providing administrative controls, user management capabilities, debugging tools, and operational dashboards. The service is built on Express 3.x with EJS templating and extends the VoxerService base class.
 
-## Entry Point
+## User Management
 
-- **Main File**: `admin_tool.js`
-- **Service Type**: `admin`
-- **Base Class**: Extends `VoxerService`
-- **File Size**: 161KB (extensive functionality)
-- **Framework**: Express 3.x with EJS templating
+The Admin Tool manages Voxer user accounts. It provides user search, profile viewing and editing, account operations including disabling and deleting accounts, password resets, permission management, and access to user activity logs.
 
-## Key Responsibilities
+## Support Tools
 
-1. **User Management**
-   - View and edit user profiles
-   - User account operations (disable, delete, etc.)
-   - Reset passwords
-   - Manage user permissions
-   - View user activity logs
+The Admin Tool provides message history viewing, user impersonation for debugging, account recovery functionality, and abuse and moderation tools.
 
-2. **Support Tools**
-   - Customer support case management
-   - User impersonation (for debugging)
-   - Message history viewing
-   - Account recovery
-   - Abuse and moderation tools
+## System Operations
 
-3. **System Operations**
-   - Service health monitoring
-   - Configuration management
-   - Feature flag control
-   - Cache invalidation
-   - Database maintenance tools
+The Admin Tool provides service health monitoring, configuration management, feature flag control, cache invalidation tools, and database maintenance utilities.
 
-4. **Analytics & Reporting**
-   - User statistics
-   - System metrics
-   - Revenue reports
-   - Growth analytics
-   - Error reporting
+## Analytics & Reporting
+
+The Admin Tool provides user statistics, system metrics, growth patterns, revenue reports, and error reporting.
 
 ## Web Interface
 
-### Technology Stack
-- **Express 3.x** - Web framework
-- **EJS** - Template engine (via `ejs` package)
-- **express-partials** - Partial template support
-- **connect-flash** - Flash messages
-- **Bootstrap** - UI framework (likely)
-
-### View Templates
-Located in `admin_tool_views/` directory with 36 view files including:
-- User management pages
-- Dashboard views
-- Report generators
-- Configuration editors
-- Debug tools
+The Admin Tool is built using Express 3.x and EJS templating. It uses express-partials for modular components and connect-flash for user feedback messages. The view layer includes user management pages, dashboards, report generators, configuration editors, and debug tools.
 
 ## Authentication & Authorization
 
-### Role-Based Access
-Three role levels (defined in `admin_tool.js`):
-- **user** (level 10) - Basic access
-- **admin** (level 100) - Admin operations
-- **legaladmin** (level 1000) - Full access including legal/compliance
-
-### Security
-- Password-based authentication
-- Session management
-- Role enforcement
-- Audit logging of admin actions
-- IP restrictions (production)
-
-### Environment-Specific
-- Development: Simple password auth with default `dev_role`
-- Production: Password file-based authentication
-
-## Key Features
-
-### User Operations
-- Search users
-- View user details
-- Edit user profiles
-- Manage user settings
-- View message history
-- Badge count management (via `BadgeCount` model)
-
-### Content Moderation
-- Review reported content
-- User blocking/suspension
-- Message deletion
-- Abuse pattern detection
-
-### System Management
-- Service configuration
-- Feature flags
-- A/B test setup
-- Cache management
-- Database queries
-
-### Analytics
-- User metrics
-- System health
-- Revenue tracking
-- Growth funnel
-- Error rates
+The Admin Tool implements role-based access control with three permission levels: basic user access, admin access, and legal admin access. It enforces password-based authentication with session management and logs all administrative actions. Production environments include IP restrictions. Development environments use simplified authentication with default role assignment.
 
 ## Dependencies
 
-### Internal Services
-- **Header Store** (US client) - User data
-- **Node Router** (NR client) - Session management
-- **Contact Service** - Contact data
-- **Riak** - Raw data access
-- **Relay Client** - Riak communication
-
-### npm Packages
-- `express` - Web framework
-- `ejs` - Templating
-- `bcrypt` - Password hashing
-- `request` - HTTP client
-- `validator` - Input validation
-- `underscore` - Utility functions
-
-## API Integrations
-
-- **GCP Components** - Google Cloud Platform integration
-- **CloudRun Client** - Cloud Run service management
-- **Stripe** (via PBR) - Payment information viewing
-- **Analytics Sender** - Event tracking
-
-## Access Control
-
-Production access controlled via:
-- Password file authentication
-- Role-based permissions
-- Restricted IP ranges
-- Session timeout
-- Audit logging
+The Admin Tool integrates with the Header Store for user data, the Node Router for session management, and the Contact Service for relationship information. It accesses Riak through the Relay Client for raw data operations. External integrations include Google Cloud Platform components, Stripe for payment information, and analytics tracking. Key npm packages include bcrypt, request, and validator.
 
 ## Operational Use Cases
 
-### Customer Support
-- Investigate user issues
-- Recover accounts
-- Debug message delivery
-- Check payment status
-
-### Engineering
-- Debug production issues
-- Test feature flags
-- Validate configurations
-- Performance investigation
-
-### Legal/Compliance
-- Data export for legal requests
-- Account deletion
-- Compliance reporting
-- Audit trail access
-
-## Configuration
-
-Service configuration includes:
-- Web server port
-- Authentication settings
-- Database connections
-- Service pool configurations
-- Feature flags
+The Admin Tool supports investigating user issues, recovering accounts, debugging message delivery, and checking payment status. It provides debugging for production issues, testing feature flags, validating configurations, and investigating performance problems. It handles data exports, account deletions, compliance reports, and audit trail access.
 
 ## Security Considerations
 
-1. **Access Control**
-   - Strong authentication required
-   - Role-based permissions
-   - Action audit logging
-   - Session management
-
-2. **Data Protection**
-   - Sensitive data masking
-   - Encrypted connections
-   - Limited data retention in UI
-   - No credential storage
-
-3. **Abuse Prevention**
-   - Rate limiting
-   - IP restrictions
-   - Action logging
-   - Alerting on suspicious activity
-
-## Code Location
-
-**Repository**: `https://github.com/voxer/server`
-**Main File**: `admin_tool.js`
-**Views Directory**: `admin_tool_views/`
+The Admin Tool implements authentication and role-based permissions to restrict access. All administrative actions are logged for audit trails. Sensitive data is protected through masking, encrypted connections, and limited data retention. Abuse prevention includes rate limiting, IP restrictions, and alerting.
