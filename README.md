@@ -1,11 +1,11 @@
 # Voxer Architecture Overview
 
-## Code
+## Clients
 
-- [iOS Client](Code/ios.md)
-- [Server](Code/server.md)
-- [Unison](Code/unison.md)
-- [Web Client](Code/webclient.md)
+- [iOS Client](Clients/ios.md)
+- [Server](Server/README.md)
+- [Unison](Clients/unison.md)
+- [Web Client](Clients/webclient.md)
 
 ## Reference
 
