@@ -41,6 +41,15 @@ The API uses versioned endpoints (e.g., `/2/cs/login`) with session-based authen
 
 ## Reference
 
+### Source Code Repositories
+
+- **[voxer/server](https://github.com/voxer/server)** - Node.js backend server infrastructure
+- **[voxer/ios](https://github.com/voxer/ios)** - Native iOS client application
+- **[voxer/webclient](https://github.com/voxer/webclient)** - Modern React Native/Expo client (web, iOS, Android)
+- **[voxer/unison](https://github.com/voxer/unison)** - Legacy web client (Backbone.js)
+
+### Architecture Documents
+
 - [Server Architecture, Design Principles, and Coding Style](Reference/Server%20Architecture%2C%20Design%20Principles%2C%20and%20Coding%20Style.md)
   Documents the production operation for the Voxer service, including scalability principles, data storage strategies (Riak, Data Store, Redis), service-oriented architecture, and detailed coding standards for the Node.js codebase. Emphasizes building a telecommunications infrastructure designed for 24/7 availability with tolerance for single machine/process failures.
 
