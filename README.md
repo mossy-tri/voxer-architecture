@@ -1,11 +1,43 @@
 # Voxer Architecture Overview
 
-## Clients
+This repository contains comprehensive documentation of the Voxer platform architecture, including client applications, backend services, and API specifications.
 
-- [iOS Client](Clients/ios.md)
-- [Server](Server/README.md)
-- [Unison](Clients/unison.md)
-- [Web Client](Clients/webclient.md)
+## Documentation Sections
+
+### [Clients](Clients/README.md)
+
+Client applications that connect to the Voxer platform across different platforms:
+
+- **[iOS Client](Clients/ios.md)** - Native iPhone and Apple Watch application built with Swift/Objective-C
+- **[Web Client](Clients/webclient.md)** - Modern cross-platform client using React Native and Expo (web, iOS, Android)
+- **[Unison](Clients/unison.md)** - Legacy web client built with Backbone.js/Marionette
+
+All clients implement real-time messaging with offline support, local data persistence, and seamless synchronization.
+
+### [Server](Server/README.md)
+
+Node.js-based backend infrastructure implementing the core Voxer messaging services. The server uses a microservices architecture with 17+ independently deployable services including:
+
+- **Node Router (NR)** - Client connection handling and message routing
+- **Header Store (HS)** - Message metadata storage using PostgreSQL and Redis
+- **Body Store (BS)** - Media storage and streaming with Riak
+- **Authentication, Notification, Contact, Growth, and Business services**
+- **Payment processing (PBR)** - Stripe integration for subscriptions
+
+See [Server/Services/README.md](Server/Services/README.md) for detailed service architecture documentation.
+
+### [API](Api/README.md)
+
+Complete REST API documentation organized by functional area:
+
+- **Authentication & Session** - User registration, login, and session management
+- **Messaging** - Send/receive messages, reactions, search, and AI features
+- **Chat Management** - Thread creation, participants, and settings
+- **User Profile & Contacts** - Profile management and contact lists
+- **Teams & Billing** - Team administration and subscription management
+- **Timeline & Sync** - Real-time updates and data synchronization
+
+The API uses versioned endpoints (e.g., `/2/cs/login`) with session-based authentication via `Rv_session_key` parameters.
 
 ## Reference
 
