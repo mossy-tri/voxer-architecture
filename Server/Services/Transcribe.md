@@ -1,161 +1,60 @@
 # Transcription Service
 
+**Repository**: `https://github.com/voxer/server`
+**Location**: `transcribe/transcribe.js`
+
 ## Overview
 
-The Transcription Service converts audio messages to text using speech-to-text APIs. It provides automated transcription of voice messages to improve accessibility and searchability.
+The Transcription Service converts audio messages to text using speech-to-text APIs. The service extends the VoxerService base class and provides automated transcription of voice messages.
 
-## Entry Point
+## Audio Transcription
 
-- **Main File**: `transcribe/transcribe.js`
-- **Service Type**: `transcribe`
-- **Base Class**: Extends `VoxerService`
+The service converts audio messages to text with support for multiple languages. Transcription results include quality scores and confidence metrics.
 
-## Key Responsibilities
+## Transcription Management
 
-1. **Audio Transcription**
-   - Convert audio messages to text
-   - Multiple language support
-   - Accuracy optimization
-   - Quality scoring
+The service queues transcription jobs, tracks their status, and stores results linked to the original messages. A pool client in `transcribe/pool.js` provides load-balanced connections across instances.
 
-2. **Transcription Management**
-   - Queue transcription jobs
-   - Track transcription status
-   - Store transcription results
-   - Link transcriptions to messages
+## Speech Recognition
 
-3. **Speech Recognition**
-   - Integration with speech-to-text APIs
-   - Audio format conversion
-   - Quality preprocessing
-   - Confidence scoring
+The service integrates with speech-to-text APIs including Google Cloud Speech-to-Text, AWS Transcribe, Azure Speech Services, and custom models. Audio undergoes format conversion and quality preprocessing before submission. Results include confidence scoring.
 
-4. **Search Integration**
-   - Index transcribed text
-   - Enable text search of voice messages
-   - Highlight search terms in transcripts
-   - Conversation search
+## Search Integration
+
+The service indexes transcribed text for search functionality. Voice messages become searchable through their transcription text with term highlighting in results.
 
 ## Transcription Flow
 
-1. **Job Submission**
-   - Receive audio message
-   - Fetch audio from Body Store
-   - Queue for transcription
-   - Return job ID
-
-2. **Processing**
-   - Download audio file
-   - Convert to required format
-   - Send to speech-to-text API
-   - Parse results
-
-3. **Storage**
-   - Save transcription text
-   - Store confidence scores
-   - Link to original message
-   - Update search index
-
-4. **Delivery**
-   - Notify client of completion
-   - Deliver transcript
-   - Show in message UI
-
-## Speech-to-Text Providers
-
-Potential integrations:
-- Google Cloud Speech-to-Text
-- AWS Transcribe
-- Azure Speech Services
-- Custom models
+Audio messages are received and fetched from the Body Store. Jobs are queued and processed by downloading audio files, converting to required formats, and submitting to speech-to-text APIs. Results are parsed, stored with confidence scores, linked to messages, and indexed for search. Clients receive completion notifications and transcripts appear in the message UI.
 
 ## Language Support
 
-- English (primary)
-- Spanish
-- French
-- Other major languages
-- Language auto-detection
+The service supports English, Spanish, French, and other major languages. Language auto-detection is available.
 
 ## API Surface
 
-HTTP endpoints for:
-- Submit transcription job
-- Check transcription status
-- Get transcription result
-- Batch transcription
-- Language configuration
-
-## Pool Client
-
-- **`transcribe/pool.js`** - Pool client for connecting to Transcribe service
-- Used by Node Router and Header Store
-- Load balanced across instances
+The service provides HTTP endpoints for job submission, status checks, result retrieval, batch transcription, and language configuration.
 
 ## Performance Characteristics
 
-- Asynchronous processing (not real-time)
-- Queue-based job processing
-- Third-party API latency
-- May take several seconds per message
-- Batch processing for efficiency
+Processing is asynchronous and queue-based. Jobs take several seconds per message due to third-party API latency. Batch processing improves efficiency. The service is horizontally scalable with rate limiting per API provider.
 
 ## Quality Considerations
 
-1. **Accuracy**
-   - Confidence thresholds
-   - Human review for low confidence
-   - User feedback on transcriptions
-   - Model improvements over time
-
-2. **Audio Quality**
-   - Noise reduction preprocessing
-   - Format optimization
-   - Sampling rate requirements
-   - Handle poor quality gracefully
+The service uses confidence thresholds and collects user feedback on transcriptions. Audio preprocessing includes noise reduction and format optimization. Poor quality audio is handled gracefully.
 
 ## Configuration
 
-Key settings:
-- Speech-to-text API credentials
-- Supported languages
-- Confidence thresholds
-- Queue settings
-- Cost optimization (when to transcribe)
+Key configuration parameters include speech-to-text API credentials, supported languages, confidence thresholds, queue settings, and cost optimization rules.
 
 ## Cost Management
 
-Transcription has per-minute costs:
-- Selective transcription (premium feature?)
-- Batch discounts
-- Cache results
-- Don't re-transcribe
+Transcription incurs per-minute API costs. The service implements selective transcription, batch discounting, result caching, and avoidance of re-transcription.
 
-## Integration Points
+## Dependencies
 
-- **Body Store** - Fetch audio files
-- **Header Store** - Store transcription metadata
-- **Message Indexer** - Index transcribed text
-- **Node Router** - Deliver results to clients
-- **Speech-to-Text APIs** - External transcription
+The service integrates with the Body Store for audio files, the Header Store for transcription metadata, the Message Indexer for text indexing, the Node Router for result delivery, and external speech-to-text APIs. It uses the Relay Client for Riak access.
 
 ## Privacy & Security
 
-- Audio data handling
-- Transcription data retention
-- End-to-end encryption considerations
-- Compliance with privacy regulations
-
-## Scaling Characteristics
-
-- Horizontally scalable workers
-- Queue-based processing
-- Rate limiting per API provider
-- Cost-aware scaling
-
-## Code Location
-
-**Repository**: `https://github.com/voxer/server`
-**Directory**: `transcribe/`
-**Main Service**: `transcribe/transcribe.js`
-**Pool Client**: `transcribe/pool.js`
+The service handles audio data and transcription data with retention policies. Privacy regulations are addressed in the context of end-to-end encryption.

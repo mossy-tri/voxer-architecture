@@ -1,232 +1,48 @@
 # Metrics Server (MS)
 
+**Repository**: `https://github.com/voxer/server`
+**Location**: `metrics_server.js` and `metrics_server/`
+
 ## Overview
 
 The Metrics Server aggregates, stores, and serves system metrics, performance data, and operational statistics from all Voxer services. It provides monitoring, alerting, and analytics capabilities.
 
-## Entry Point
+## Metrics Collection
 
-- **Main File**: `metrics_server.js`
-- **Service Type**: `ms`
-- **Base Class**: Extends `VoxerService`
+The service receives metrics from all services through a client library and stores them in a time-series database. Services send metrics via UDP for high-frequency data and HTTP for guaranteed delivery. The client library supports counters for event counting, histograms for distributions, and gauges for point-in-time values. Metrics are batched for transmission efficiency and aggregated in memory before database storage.
 
-## Key Responsibilities
+## Metrics Storage
 
-1. **Metrics Collection**
-   - Receive metrics from all services
-   - Aggregate time-series data
-   - Store metrics in database
-   - Real-time metrics streaming
+The service uses PostgreSQL with time-series optimized schemas through the Zag metrics pipeline. Data is partitioned by time and downsampled according to retention policies. Recent data is stored at high resolution, while historical data is aggregated into lower resolutions. Old data is compressed and archived according to configurable retention tiers.
 
-2. **Metrics Storage**
-   - Time-series database
-   - Data retention policies
-   - Downsampling for old data
-   - Efficient querying
+## Metrics Serving
 
-3. **Metrics Serving**
-   - Query APIs for dashboards
-   - Real-time metrics endpoints
-   - Historical data queries
-   - Aggregation functions
+The service provides query APIs for dashboards and monitoring tools. It supports time range queries, metric filtering, aggregation functions, and real-time metrics streaming via WebSocket. Historical data queries can apply downsampling for display purposes. Integration points include external dashboards and custom monitoring views.
 
-4. **Alerting**
-   - Threshold-based alerts
-   - Anomaly detection
-   - Alert routing
-   - Alert management
+## Alerting
 
-## Metrics Architecture
-
-### Collection
-Services send metrics via:
-- **`metrics_client.js`** - Client library used by all services
-- UDP for high-frequency metrics
-- HTTP for guaranteed delivery
-- Batch sending for efficiency
-
-### Aggregation
-- Counter aggregation
-- Histogram calculation
-- Percentile computation
-- Rate calculations
-
-### Storage Backend
-- **PostgreSQL** - Via `zag-backend-pg`
-- **Zag** - Metrics pipeline (`zag`, `zag-agent`, `zag-daemon`)
-- Time-series optimized schema
-- Partitioned tables by time
+The service implements threshold-based alerts, rate-of-change alerts, and anomaly detection. Alerts are routed through email, SMS, PagerDuty, and Slack integrations. Alert configurations include threshold values, escalation policies, and delivery preferences.
 
 ## Metrics Types
 
-### System Metrics
-- CPU usage
-- Memory usage
-- Disk I/O
-- Network traffic
-- Process metrics
-
-### Application Metrics
-- Request rates
-- Response times
-- Error rates
-- Success rates
-- Queue depths
-
-### Business Metrics
-- Active users
-- Message volume
-- Media upload/download rates
-- Premium subscriptions
-- Revenue metrics
-
-## Metrics Client
-
-All services use `metrics_client.js` which provides:
-
-### Counter
-```javascript
-counter("metric.name", value);
-```
-Increments counters for event counting.
-
-### Histogram
-```javascript
-histogram("metric.name", value);
-```
-Records distributions for latency, sizes, etc.
-
-### Gauge
-```javascript
-gauge("metric.name", value);
-```
-Records point-in-time values.
+The service collects system metrics including CPU usage, memory usage, disk I/O, network traffic, and process metrics. Application metrics include request rates, response times, error rates, and queue depths. Business metrics include active users, message volume, media transfer rates, and subscription data.
 
 ## Supporting Components
 
-### Monitor
-- **`metrics_server/monitor/monitor.js`** - Monitoring daemon
-- **`metrics/monitor.js`** - Metrics monitoring
-- Health checks
-- Alerting logic
-
-### Channel
-- **`metrics_server/channel/metrics_channel.js`** - Metrics distribution channel
-- Real-time metrics streaming
-- WebSocket-based updates
-- Dashboard integration
-
-### Stuck Time Detector
-- **`metrics_server/stuck-time.js`** - Detect stuck processes
-- Event loop monitoring
-- Deadlock detection
-
-## System Metrics Collection
-
-**`gather_system_metrics.js`** - Collects system-level metrics:
-- CPU usage per core
-- Memory utilization
-- Swap usage
-- Disk usage
-- Network interface stats
-- Process-specific metrics
-
-## Visualization & Dashboards
-
-### Integration Points
-- Grafana (likely)
-- Custom dashboards via metrics API
-- Real-time monitoring views
-- Historical trend analysis
-
-### Query API
-- Time range queries
-- Metric filtering
-- Aggregation functions
-- Downsampling for display
-
-## Alerting System
-
-### Alert Types
-- Threshold alerts (> or < value)
-- Rate-of-change alerts
-- Anomaly detection
-- Pattern matching
-
-### Alert Routing
-- Email notifications
-- SMS/PagerDuty integration
-- Slack/chat integration
-- Escalation policies
+The service includes a monitoring daemon for health checks and alerting logic. A metrics channel component provides real-time distribution to dashboards. A stuck time detector monitors event loops and identifies deadlocks. The system metrics collector gathers CPU, memory, swap, disk, and network statistics.
 
 ## Performance Characteristics
 
-- Very high write volume
-- Moderate read volume
-- Batch writes for efficiency
-- In-memory aggregation
-- Periodic database flushes
-
-## Data Retention
-
-### Retention Tiers
-- **High resolution** - Recent data (hours/days)
-- **Medium resolution** - Recent data (weeks)
-- **Low resolution** - Historical data (months/years)
-- **Archived** - Compressed old data
-
-### Downsampling
-- Aggregate high-frequency data
-- Reduce storage requirements
-- Maintain long-term trends
-- Configurable retention policies
-
-## Configuration
-
-Key settings:
-- Metrics collection port
-- Database connection
-- Retention policies
-- Downsampling rules
-- Alert thresholds
-- Storage quotas
+The service handles high write volume through batch writes and in-memory aggregation. Database writes are performed periodically to reduce load. Query operations are optimized for time-series data access patterns.
 
 ## Dependencies
 
-### npm Packages
-- `metrics` - Metrics library
-- `zag` - Metrics pipeline
-- `zag-agent` - Metrics agent
-- `zag-backend-pg` - PostgreSQL backend
-- `zag-daemon` - Metrics daemon
-- `llquantize` - Log-linear quantization
+The service uses the metrics, zag, zag-agent, zag-backend-pg, zag-daemon, and llquantize npm packages. It requires PostgreSQL for storage and receives data from all Voxer services. The service itself emits metrics on collection rate, storage latency, query performance, alert delivery, and database health.
 
-### Services
-- PostgreSQL database
-- All Voxer services (data sources)
-- Monitoring tools (Grafana, etc.)
+## Configuration
+
+Key configuration parameters include metrics collection ports, database connections, retention policies, downsampling rules, alert thresholds, and storage quotas.
 
 ## Scaling Characteristics
 
-- Horizontally scalable collectors
-- Partitioned database
-- Can shard by metric namespace
-- High write throughput
-- Query optimization important
-
-## Monitoring the Monitor
-
-The Metrics Server itself emits metrics:
-- Collection rate
-- Storage latency
-- Query performance
-- Alert delivery success
-- Database health
-
-## Code Location
-
-**Repository**: `https://github.com/voxer/server`
-**Main Service**: `metrics_server.js`
-**Directory**: `metrics_server/`
-**Client Library**: `metrics_client.js`
-**System Metrics**: `gather_system_metrics.js`
+The service is horizontally scalable for metrics collection. The database can be partitioned and sharded by metric namespace. Query optimization is required for read performance.

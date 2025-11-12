@@ -1,98 +1,52 @@
 # Header Store (HS)
 
+**Repository**: `https://github.com/voxer/server`
+**Location**: `header_store.js` and `header_store/`
+
 ## Overview
 
-The Header Store is responsible for storing and retrieving message metadata, conversation state, and user presence information. It serves as the primary database for all non-media message data.
+The Header Store stores and retrieves message metadata, conversation state, and user presence information. It provides the primary database for all non-media message data.
 
-## Entry Point
+## Message Metadata Storage
 
-- **Main File**: `header_store.js`
-- **Service Type**: `hs`
-- **Base Class**: Extends `VoxerService`
-- **File Size**: 154KB (extensive functionality)
+The service stores message headers and attributes, conversation and thread metadata, message state and delivery status, and read receipts and acknowledgments.
 
-## Key Responsibilities
+## User Data Management
 
-1. **Message Metadata Storage**
-   - Message headers and attributes
-   - Conversation/thread metadata
-   - Message state and delivery status
-   - Read receipts and acknowledgments
+The service manages user profiles and settings, contact relationships, user presence and online status, and device tokens for push notifications.
 
-2. **User Data Management**
-   - User profiles and settings
-   - Contact relationships
-   - User presence and online status
-   - Device tokens for push notifications
+## Conversation Management
 
-3. **Conversation Management**
-   - Thread/conversation creation
-   - Participant management
-   - Conversation history
-   - Muting and notification preferences
+The service handles thread and conversation creation, participant management, conversation history, and muting and notification preferences.
 
-4. **Search and Indexing**
-   - Message search capabilities
-   - Conversation lookups
-   - User directory queries
+## Search and Indexing
+
+The service provides message search capabilities, conversation lookups, and user directory queries.
 
 ## Storage Backend
 
-- **Primary Database**: PostgreSQL
-  - Persistent storage for all message metadata
-  - Relational queries for complex lookups
-  - Transaction support for data consistency
-
-- **Caching Layer**: Redis (ioredis)
-  - Fast access to frequently accessed data
-  - Pub/sub for real-time updates
-  - Session state caching
+The service uses PostgreSQL as its primary database for persistent storage of message metadata, relational queries, and transaction support. Redis provides a caching layer for frequently accessed data, pub/sub for real-time updates, and session state caching.
 
 ## API Surface
 
-Provides HTTP endpoints for:
-- Message CRUD operations
-- Conversation management
-- User profile queries
-- Search operations
-- Analytics and reporting queries
+The service provides HTTP endpoints for message CRUD operations, conversation management, user profile queries, search operations, and analytics and reporting queries.
 
 ## Performance Characteristics
 
-- High read/write throughput requirements
-- Extensive caching to reduce database load
-- Connection pooling to PostgreSQL
-- Optimized for low-latency lookups
+The service implements connection pooling to PostgreSQL and extensive caching to reduce database load. It is optimized for low-latency lookups and high read/write throughput.
 
 ## Configuration
 
-Key configuration parameters:
-- PostgreSQL connection settings
-- Redis connection pool settings
-- Cache TTL configurations
-- Rate limiting thresholds
+Key configuration parameters include PostgreSQL connection settings, Redis connection pool settings, cache TTL configurations, and rate limiting thresholds.
 
 ## Scaling Characteristics
 
-- Horizontally scalable (multiple HS instances)
-- Stateless (can route to any instance)
-- Database is the scaling bottleneck
-- Heavy use of caching to improve performance
+The service is horizontally scalable with multiple instances and stateless request handling. The database is the scaling bottleneck. Caching is used to improve performance.
 
 ## Dependencies
 
-- PostgreSQL database
-- Redis cache cluster
-- Metrics service for monitoring
-- Message Indexer service (for search)
+The service uses PostgreSQL database, Redis cache cluster, the Metrics service for monitoring, and the Message Indexer service for search.
 
 ## Related Services
 
-- **Message Indexer** (`message_indexer.js`) - Indexes messages for search
-- **Message Saver** (`message_saver.js`) - Asynchronous message persistence
-
-## Code Location
-
-**Repository**: `https://github.com/voxer/server`
-**Main File**: `header_store.js`
-**Directory**: `header_store/` (supporting modules)
+The Message Indexer (`message_indexer.js`) indexes messages for search. The Message Saver (`message_saver.js`) provides asynchronous message persistence.

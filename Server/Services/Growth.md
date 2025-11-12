@@ -1,145 +1,74 @@
 # Growth Service
 
+**Repository**: `https://github.com/voxer/server`
+**Location**: `growth/growth.js`
+
 ## Overview
 
-The Growth Service manages user acquisition, viral features, invite systems, and growth-related analytics. It implements various mechanisms to drive user growth and engagement.
+The Growth Service manages user acquisition, viral features, invite systems, and growth-related analytics. It extends the VoxerService base class and implements mechanisms to drive user growth and engagement.
 
-## Entry Point
+## Invite System
 
-- **Main File**: `growth/growth.js`
-- **Service Type**: `growth`
-- **Base Class**: Extends `VoxerService`
+The service generates invite links, tracks invite sends and conversions, implements referral attribution, and manages invite rewards and incentives.
 
-## Key Responsibilities
+## Viral Features
 
-1. **Invite System**
-   - Generate invite links
-   - Track invite sends and conversions
-   - Referral attribution
-   - Invite rewards and incentives
+The service provides friend recommendations, contact import and matching, social sharing mechanics, and viral loops.
 
-2. **Viral Features**
-   - Friend recommendations
-   - Contact import and matching
-   - Social sharing mechanics
-   - Viral loops and flows
+## User Onboarding
 
-3. **User Onboarding**
-   - New user welcome flows
-   - Tutorial and feature discovery
-   - Initial contact suggestions
-   - First message prompts
+The service implements new user welcome flows, tutorials and feature discovery, initial contact suggestions, and first message prompts.
 
-4. **Growth Analytics**
-   - Conversion funnel tracking
-   - Viral coefficient measurement
-   - A/B test support
-   - Attribution modeling
+## Growth Analytics
 
-## Invite Mechanisms
+The service tracks conversion funnels, measures viral coefficients, supports A/B testing, and implements attribution modeling.
 
-### Invite Channels
-- SMS invites
-- Email invites
-- Social media sharing
-- Dynamic links (via Short URL service)
-- QR codes
+## Invite Channels
 
-### Invite Tracking
-- Unique invite codes per user
-- Track invite sends
-- Track invite clicks
-- Track conversions (sign-ups)
-- Multi-touch attribution
+The service delivers invites through SMS, email, social media sharing, dynamic links via the Short URL service, and QR codes. Each user receives unique invite codes for tracking sends, clicks, and conversions. The service implements multi-touch attribution.
 
 ## Session Management
 
-Implements session start logic:
-- **`handlers/start_session.js`** - Session initialization
-- **`start_session.js`** - Session routing
-- User onboarding flows
-- Feature flag checks for new users
+The service implements session start logic through `handlers/start_session.js` and `start_session.js`. It routes user onboarding flows and checks feature flags for new users.
 
-## Pool Client
+## Referral Programs
 
-- **`growth/pool.js`** - Pool client for connecting to Growth service
-- Used by Node Router and other services
-- Load balanced across multiple instances
+The service tracks referrer-referee relationships, distributes rewards, detects fraud, and manages campaigns.
+
+## Social Features
+
+The service provides friend finding, contact suggestions, group recommendations, and trending content.
+
+## Engagement Campaigns
+
+The service implements re-engagement notifications, feature announcements, promotional campaigns, and targeted messaging.
 
 ## API Surface
 
-HTTP endpoints for:
-- Generate invite link
-- Send invite
-- Track invite event
-- Get invite status
-- Referral program management
-- A/B test assignment
+The service provides HTTP endpoints for invite link generation, invite sending, invite event tracking, invite status retrieval, referral program management, and A/B test assignment.
 
-## Growth Features
+## Dependencies
 
-1. **Referral Programs**
-   - Track referrer-referee relationships
-   - Reward distribution
-   - Fraud detection
-   - Campaign management
-
-2. **Social Features**
-   - Find friends on Voxer
-   - Contact suggestions
-   - Group recommendations
-   - Trending content
-
-3. **Engagement Campaigns**
-   - Re-engagement notifications
-   - Feature announcements
-   - Promotional campaigns
-   - Targeted messaging
-
-## Integration Points
-
-- **Short URL Service** - Generate trackable invite links
-- **Contact Service** - Contact import and matching
-- **Friend-of-Friend Service** - Social graph analysis
-- **Email Service** - Email invite delivery
-- **SMS gateways** - SMS invite delivery
-- **Analytics** - Event tracking and reporting
+The service integrates with the Short URL Service for trackable invite links, the Contact Service for contact import and matching, the Friend-of-Friend Service for social graph analysis, the Email Service for email delivery, SMS gateways for SMS delivery, and analytics systems for event tracking and reporting. The pool client in `growth/pool.js` connects the Node Router and other services to the Growth Service with load balancing across multiple instances.
 
 ## Configuration
 
-- Invite templates (SMS, email)
-- Reward structures
-- A/B test configurations
-- Campaign settings
-- Fraud detection thresholds
+Key configuration parameters include invite templates for SMS and email, reward structures, A/B test configurations, campaign settings, and fraud detection thresholds.
 
 ## Performance Characteristics
 
-- Medium traffic volume
-- Burst traffic during viral events
-- Mostly asynchronous processing
-- Event tracking via queue
+The service handles medium traffic volume with burst traffic during viral events. Processing is mostly asynchronous with event tracking via queue.
 
 ## Scaling Characteristics
 
-- Horizontally scalable
-- Stateless service design
-- Database for persistent tracking
-- Queue for async event processing
+The service is horizontally scalable with stateless design. It uses a database for persistent tracking and a queue for async event processing.
 
 ## Special Considerations
 
-**VXR vs. Standard**: The service includes special handling for the VXR variant of Voxer:
+The service disables growth features for the VXR variant of Voxer:
 ```javascript
 if (config.site === "vxr") {
     // No growth features for VXR
     return callback(new Error("no growth for vxr"));
 }
 ```
-
-## Code Location
-
-**Repository**: `https://github.com/voxer/server`
-**Directory**: `growth/`
-**Entry Point**: `growth/growth.js`
-**Pool Client**: `growth/pool.js`

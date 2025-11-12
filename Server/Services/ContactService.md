@@ -1,122 +1,56 @@
 # Contact Service (CS)
 
+**Repository**: `https://github.com/voxer/server`
+**Location**: `contact_service/`
+
 ## Overview
 
 The Contact Service manages user contact lists, contact synchronization, and contact discovery. It handles the import, storage, and matching of contacts from various sources.
 
-## Entry Point
+## Contact List Management
 
-- **Main File**: `contact_service/contact_server.js`
-- **Service Type**: `cs`
-- **Base Class**: Extends `VoxerService`
+The service stores user contact lists and performs CRUD operations on contacts. It provides contact organization and grouping functionality and manages contact metadata.
 
-## Key Responsibilities
+## Contact Synchronization
 
-1. **Contact List Management**
-   - Store user contact lists
-   - Contact CRUD operations
-   - Contact organization and grouping
-   - Contact metadata
+The service imports contacts from phone address books, email providers including Gmail and Outlook, and social networks. It performs incremental synchronization with client devices and implements conflict resolution.
 
-2. **Contact Synchronization**
-   - Import contacts from phone address books
-   - Import from email providers (Gmail, Outlook, etc.)
-   - Import from social networks
-   - Incremental sync with client devices
-   - Conflict resolution
+## Contact Discovery
 
-3. **Contact Discovery**
-   - Match phone numbers to Voxer users
-   - Match email addresses to Voxer users
-   - Privacy-preserving contact matching
-   - Suggest Voxer contacts
+The service matches phone numbers and email addresses to Voxer users through privacy-preserving contact matching. It provides contact suggestions based on existing contact data.
 
-4. **Privacy & Permissions**
-   - Contact sharing preferences
-   - Block/unblock contacts
-   - Privacy settings enforcement
-   - GDPR compliance for contact data
+## Privacy & Permissions
+
+The service manages contact sharing preferences and implements block/unblock functionality. It enforces privacy settings and maintains GDPR compliance for contact data.
 
 ## Contact Matching
 
-The service performs privacy-preserving contact matching:
-- Hash-based matching to protect privacy
-- Phone number normalization (E.164 format)
-- Email address normalization
-- Fuzzy matching for name-based lookup
+The service performs hash-based matching to protect privacy. It normalizes phone numbers to E.164 format and standardizes email addresses. Fuzzy matching is implemented for name-based lookup.
 
 ## Data Storage
 
-- User contact lists
-- Contact-to-user mappings
-- Import history and metadata
-- Blocked contacts
-- Sharing preferences
+The service stores user contact lists, contact-to-user mappings, import history and metadata, blocked contacts, and sharing preferences.
 
 ## API Surface
 
-HTTP endpoints for:
-- Upload contacts
-- Sync contacts
-- Get contact list
-- Search contacts
-- Block/unblock contacts
-- Contact suggestions
+The service provides HTTP endpoints for uploading contacts, syncing contacts, retrieving contact lists, searching contacts, blocking and unblocking contacts, and generating contact suggestions.
 
 ## Integration Points
 
-### Import Sources
-- Phone address book (iOS/Android)
-- Gmail contacts
-- Outlook/Exchange
-- Facebook friends
-- Twitter followers
+The service imports from phone address books on iOS and Android, Gmail contacts, Outlook/Exchange, Facebook friends, and Twitter followers. It integrates with phone number validation services, email verification services, and social network APIs.
 
-### External Services
-- Phone number validation services
-- Email verification
-- Social network APIs
+## Data Protection
 
-## Privacy Considerations
-
-1. **Data Minimization**
-   - Only store necessary contact data
-   - Hash sensitive identifiers
-   - Regular data cleanup
-
-2. **User Consent**
-   - Explicit permission for contact access
-   - Granular sharing controls
-   - Opt-out mechanisms
-
-3. **Data Protection**
-   - Encrypted storage
-   - Access controls
-   - Audit logging
+The service stores only necessary contact data and hashes sensitive identifiers. Regular data cleanup is performed. User consent is required for contact access with granular sharing controls and opt-out mechanisms. Storage is encrypted with access controls and audit logging.
 
 ## Performance Characteristics
 
-- Read-heavy workload (contact lookups)
-- Periodic sync bursts
-- Large batch imports need throttling
-- Caching for frequent lookups
+The service handles read-heavy workloads with frequent contact lookups. It processes periodic sync bursts and throttles large batch imports. Caching is implemented for frequent lookups.
 
 ## Scaling Characteristics
 
-- Horizontally scalable
-- Partitionable by user ID
-- Cache-friendly access patterns
-- Can shard database by user ranges
+The service is horizontally scalable and partitionable by user ID. Access patterns are cache-friendly and the database can be sharded by user ranges.
 
 ## Dependencies
 
-- Header Store (user data)
-- People Matcher service (contact suggestions)
-- Third-party contact import APIs
-- Phone number/email validation services
-
-## Code Location
-
-**Repository**: `https://github.com/voxer/server`
-**Directory**: `contact_service/`
-**Entry Point**: `contact_service/contact_server.js`
+The service integrates with the Header Store for user data and the People Matcher service for contact suggestions. It uses third-party contact import APIs and phone number/email validation services.

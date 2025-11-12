@@ -1,156 +1,48 @@
 # Short URL Service
 
+**Repository**: `https://github.com/voxer/server`
+**Location**: `shorturl/`
+
 ## Overview
 
-The Short URL Service generates and manages shortened URLs and dynamic links for sharing content, tracking campaigns, and enabling deep linking into the Voxer application.
+The Short URL Service generates and manages shortened URLs and dynamic links for sharing content, tracking campaigns, and deep linking into the Voxer application.
 
-## Entry Point
+## URL Shortening
 
-- **Main File**: `shorturl/shorturl.js`
-- **Service Type**: `shorturl`
-- **Base Class**: Extends `VoxerService`
+The service generates short URLs from long URLs, stores mappings in a database, and handles redirection. Custom slugs can be specified. URLs support expiration policies and can be deactivated. When a short URL is accessed, the service looks up the mapping, tracks the click event, and redirects to the destination.
 
-## Key Responsibilities
+## Dynamic Links
 
-1. **URL Shortening**
-   - Generate short URLs
-   - Custom short link slugs
-   - URL expiration policies
-   - Link deactivation
+The service provides cross-platform deep linking with platform detection for iOS, Android, and web. It implements deferred deep linking for app install attribution and provides fallback URLs for non-app users. The service preserves deep link parameters during redirection and supports link preview customization. Firebase Dynamic Links integration is implemented through `dynamic_link/firebase_links_pool.js` and `dynamic_link/short_link.js`.
 
-2. **Dynamic Links**
-   - Deep linking to app content
-   - Platform detection (iOS/Android/Web)
-   - App install attribution
-   - Fallback URLs for non-app users
+## Link Tracking
 
-3. **Link Tracking**
-   - Click tracking
-   - Referrer tracking
-   - Geographic data
-   - Device/platform analytics
+The service captures timestamp, IP address and geolocation, user agent and device information, referrer URL, and platform data for each click. Click-through rates and conversion tracking are recorded.
 
-4. **Campaign Management**
-   - Campaign-specific links
-   - UTM parameter preservation
-   - A/B test link variants
-   - QR code generation
+## Campaign Management
 
-## Dynamic Link Implementations
-
-### Firebase Dynamic Links
-- **`dynamic_link/firebase_links_pool.js`** - Firebase integration pool
-- **`dynamic_link/short_link.js`** - Short link generation
-
-### Features
-- Cross-platform deep linking
-- Deferred deep linking (install attribution)
-- Link preview customization
-- Analytics integration
-
-## URL Shortening Flow
-
-1. **Link Creation**
-   - Receive long URL
-   - Generate short code
-   - Store mapping in database
-   - Return short URL
-
-2. **Link Resolution**
-   - Receive short URL request
-   - Lookup in database
-   - Track click event
-   - Redirect to destination
-
-3. **Smart Redirect**
-   - Detect platform (iOS/Android/Web)
-   - Check if app is installed
-   - Redirect to app or fallback URL
-   - Preserve deep link parameters
-
-## Use Cases
-
-### Invite Links
-- Generate unique invite URLs
-- Track invite attribution
-- Deep link to sign-up flow
-
-### Content Sharing
-- Share messages/media
-- Share conversation links
-- Share profile links
-
-### Marketing Campaigns
-- Campaign-specific URLs
-- Track campaign performance
-- A/B testing different creatives
-
-### QR Codes
-- Generate QR codes for events
-- In-app QR scanning
-- Physical marketing materials
+The service generates campaign-specific links and preserves UTM parameters. A/B test link variants are supported. QR codes can be generated for links.
 
 ## API Surface
 
-HTTP endpoints for:
-- Create short URL
-- Get link analytics
-- Deactivate link
-- Custom slug availability
-- Bulk link creation
+The service provides HTTP endpoints for creating short URLs, retrieving link analytics, deactivating links, checking custom slug availability, and bulk link creation.
 
 ## Pool Client
 
-- **`shorturl/pool.js`** - Pool client for connecting to Short URL service
-- Used by Growth, Node Router, and other services
-- Load balanced across instances
-
-## Analytics & Tracking
-
-Captures for each click:
-- Timestamp
-- IP address and geolocation
-- User agent and device
-- Referrer URL
-- Platform (iOS/Android/Web/Desktop)
-- Click-through rate
-- Conversion tracking
+The service provides a pool client in `shorturl/pool.js` for connecting to Short URL service instances. The pool client is used by Growth, Node Router, and other services with load balancing across instances.
 
 ## Configuration
 
-Key settings:
-- Short URL domain
-- Firebase Dynamic Links credentials
-- Default expiration times
-- Custom slug rules
-- Rate limiting per user
+Key configuration parameters include the short URL domain, Firebase Dynamic Links credentials, default expiration times, custom slug rules, and rate limiting per user.
 
-## Integration Points
+## Dependencies
 
-- **Firebase Dynamic Links API** - Dynamic link generation
-- **Growth Service** - Invite link generation
-- **Analytics Service** - Click tracking
-- **Node Router** - Deep link handling
+The service integrates with Firebase Dynamic Links API for dynamic link generation, Growth Service for invite link generation, Analytics Service for click tracking, and Node Router for deep link handling.
 
 ## Performance Characteristics
 
-- High read volume (link redirects)
-- Lower write volume (link creation)
-- Must be very fast (user-facing redirects)
-- Heavy caching for popular links
-- Database for link mappings
+The service handles high read volume for link redirects and lower write volume for link creation. Redirects are user-facing and cached heavily for popular links. The database stores link mappings and represents the primary bottleneck.
 
 ## Scaling Characteristics
 
-- Horizontally scalable
-- Stateless redirects
-- Cache-friendly (links don't change)
-- Can use CDN for redirects
-- Database is primary bottleneck
-
-## Code Location
-
-**Repository**: `https://github.com/voxer/server`
-**Directory**: `shorturl/`
-**Main Service**: `shorturl/shorturl.js`
-**Pool Client**: `shorturl/pool.js`
+The service is horizontally scalable and stateless for redirects. Links are cache-friendly and can use CDN for redirects.

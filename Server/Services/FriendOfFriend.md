@@ -1,172 +1,52 @@
 # Friend-of-Friend Service (FOF)
 
+**Repository**: `https://github.com/voxer/server`
+**Location**: `fof/`
+
 ## Overview
 
-The Friend-of-Friend (FOF) Service analyzes the social graph to provide friend recommendations, discover mutual connections, and enable social features based on relationship networks.
+The Friend-of-Friend (FOF) Service analyzes the social graph to provide friend recommendations, discover mutual connections, and support social features based on relationship networks. The service is built on the VoxerService base class.
 
-## Entry Point
+## Friend Recommendations
 
-- **Main File**: `fof/fof.js`
-- **Service Type**: `fof`
-- **Base Class**: Extends `VoxerService`
+The service suggests users based on mutual friends and calculates relationship strength between users. Recommendations are ranked by relevance and filtered to exclude already-connected users. Scoring considers the number of mutual friends, recency of mutual connections, interaction frequency with mutual connections, geographic proximity, and shared group memberships.
 
-## Key Responsibilities
+## Social Graph Analysis
 
-1. **Friend Recommendations**
-   - Suggest users based on mutual friends
-   - Calculate relationship strength
-   - Rank recommendations by relevance
-   - Filter already-connected users
+The service builds and maintains a social graph representation of user connections. It calculates network metrics, finds shortest paths between users, and identifies communities and clusters. The graph consists of user nodes with attributes for activity, engagement, and network size. Edges represent friendships with attributes for strength, recency, and interaction count. Graph operations include adding and removing connections, updating edge weights, shortest path queries, and subgraph extraction.
 
-2. **Social Graph Analysis**
-   - Build and maintain social graph
-   - Calculate network metrics
-   - Find shortest paths between users
-   - Identify communities and clusters
+## Mutual Connection Discovery
 
-3. **Mutual Connection Discovery**
-   - Show mutual friends between users
-   - Display connection paths
-   - Suggest conversation participants
-   - Group composition insights
+The service displays mutual friends between users and connection paths. It suggests conversation participants and provides group composition insights based on shared connections.
 
-4. **Network Insights**
-   - User's network size
-   - Influential users
-   - Network density metrics
-   - Community detection
+## Network Insights
 
-## Algorithm Features
+The service calculates user network size, identifies influential users, measures network density, and detects communities within the social graph.
 
-### Friend-of-Friend Matching
-- Find friends of friends not yet connected
-- Weight by number of mutual connections
-- Consider interaction frequency
-- Prioritize recent connections
+## Privacy Filters
 
-### Recommendation Scoring
-Factors considered:
-- Number of mutual friends
-- Recency of mutual connections
-- Interaction frequency with mutuals
-- Geographic proximity
-- Shared group memberships
-
-### Privacy Filters
-- Respect user privacy settings
-- Block list enforcement
-- Hidden profile handling
-- Opt-out support
-
-## Social Graph Structure
-
-### Nodes
-- Users
-- Attributes: activity, engagement, network size
-
-### Edges
-- Friendships/connections
-- Attributes: strength, recency, interaction count
-
-### Graph Operations
-- Add/remove connections
-- Update edge weights
-- Shortest path queries
-- Subgraph extraction
-
-## Use Cases
-
-### User Discovery
-- "People you may know"
-- Contact suggestions
-- New user onboarding
-
-### Group Formation
-- Suggest group members
-- Find common connections
-- Identify natural communities
-
-### Viral Growth
-- Network effects measurement
-- Invitation targeting
-- Influence analysis
-
-## API Surface
-
-HTTP endpoints for:
-- Get friend recommendations
-- Find mutual connections
-- Calculate relationship path
-- Network statistics
-- Social graph queries
+The service respects user privacy settings, enforces block lists, handles hidden profiles, and supports opt-out preferences. Data minimization limits collection to necessary connection data, uses aggregation where possible, and implements time-limited retention. Users can opt out of recommendations and control their visibility in suggestions.
 
 ## Pool Client
 
-- **`fof/pool.js`** - Pool client for connecting to FOF service
-- Used by Growth Service and Node Router
-- Load balanced across instances
+The pool client in `fof/pool.js` connects to the FOF service with load balancing across instances. It is used by the Growth Service and Node Router.
 
 ## Data Sources
 
-- Contact Service (imported contacts)
-- Header Store (conversation participants)
-- Growth Service (invite graphs)
-- Activity logs (interaction patterns)
+The service integrates with the Contact Service for imported contacts, the Header Store for conversation participants, the Growth Service for invite graphs, and activity logs for interaction patterns.
 
-## Performance Characteristics
+## Performance
 
-- Graph traversal computations
-- Can be compute-intensive
-- Results can be cached
-- Batch processing for recommendations
-- Pre-computed recommendations
+The service performs graph traversal computations which can be compute-intensive. Results are cached with TTL-based invalidation and lazy recomputation. Recommendations are updated through periodic batch processing, off-peak graph analysis, and incremental updates. The graph can be sharded by user regions with locality-aware partitioning for distributed processing.
 
-## Optimization Strategies
+## API Surface
 
-1. **Caching**
-   - Cache recommendations per user
-   - TTL-based invalidation
-   - Lazy recomputation
-
-2. **Batch Processing**
-   - Periodic recommendation updates
-   - Off-peak graph analysis
-   - Incremental updates
-
-3. **Graph Partitioning**
-   - Shard graph by user regions
-   - Locality-aware partitioning
-   - Distributed graph processing
-
-## Privacy Considerations
-
-1. **Data Minimization**
-   - Only use necessary connection data
-   - Aggregate where possible
-   - Time-limited retention
-
-2. **User Control**
-   - Opt-out of recommendations
-   - Control visibility in suggestions
-   - Privacy-preserving algorithms
+The service provides HTTP endpoints for retrieving friend recommendations, finding mutual connections, calculating relationship paths, querying network statistics, and executing social graph queries.
 
 ## Scaling Characteristics
 
-- Stateful (maintains graph)
-- Can partition graph
-- Computation can be distributed
-- Database or graph database backend
+The service is stateful and maintains graph state. The graph can be partitioned for distributed computation. The service uses a database or graph database backend for storage.
 
 ## Dependencies
 
-- **Contact Service** - Connection data
-- **Header Store** - User and conversation data
-- **Growth Service** - Invitation data
-- **Graph Database** - Social graph storage (optional)
-
-## Code Location
-
-**Repository**: `https://github.com/voxer/server`
-**Directory**: `fof/`
-**Main Service**: `fof/fof.js`
-**Pool Client**: `fof/pool.js`
+The service integrates with the Contact Service for connection data, the Header Store for user and conversation data, the Growth Service for invitation data, and optionally a graph database for social graph storage.

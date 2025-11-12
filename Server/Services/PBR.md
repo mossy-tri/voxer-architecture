@@ -1,193 +1,56 @@
 # Purchase/Premium Broker (PBR)
 
+**Repository**: `https://github.com/voxer/server`
+**Location**: `pbr/`
+
 ## Overview
 
-The Purchase/Premium Broker service handles all payment processing, subscription management, and premium feature access. It integrates with Stripe for payment processing and manages both consumer and enterprise billing.
+The Purchase/Premium Broker service handles payment processing, subscription management, and premium feature access. It integrates with Stripe for payment processing and manages consumer and enterprise billing.
 
-## Entry Points
+## Payment Processing
 
-- **Main Service**: `pbr/pbr.js`
-- **Invoicing**: `pbr/invoicer.js`
-- **Service Type**: `pbr`
-- **Base Class**: Extends `VoxerService`
+The service processes credit card payments through Stripe, stores payment methods, handles transaction processing, manages payment failures, and processes refunds.
 
-## Key Responsibilities
+## Subscription Management
 
-1. **Payment Processing**
-   - Credit card processing via Stripe
-   - Payment method storage
-   - Transaction processing
-   - Payment failure handling
-   - Refund processing
+The service creates and cancels subscriptions, handles plan changes and upgrades, manages billing cycles, implements trial periods, and calculates prorated charges.
 
-2. **Subscription Management**
-   - Subscription creation and cancellation
-   - Plan changes and upgrades
-   - Billing cycle management
-   - Trial period handling
-   - Proration calculations
+## Premium Features
 
-3. **Premium Features**
-   - Feature access control
-   - Premium tier management
-   - Add-on purchases
-   - One-time purchases
+The service controls feature access, manages premium tiers, processes add-on purchases, and handles one-time purchases.
 
-4. **Invoicing**
-   - Generate invoices
-   - Invoice delivery
-   - Payment reminders
-   - Receipt generation
+## Invoicing
+
+The service generates and delivers invoices, sends payment reminders, and generates receipts.
 
 ## Subscription Plans
 
-### Consumer Plans
-- **Monthly SKU** - Standard monthly subscription
-- **Yearly SKU** - Annual subscription (discounted)
-- **Monthly VoxerAI SKU** - AI features monthly
-- **Yearly VoxerAI SKU** - AI features annual
-
-Plan configurations stored in:
-- `configs/monthly_sku`
-- `configs/yearly_sku`
-- `configs/monthly_voxerAI_sku`
-- `configs/yearly_voxerAI_sku`
-
-### Enterprise Plans
-- Custom pricing
-- Seat-based licensing
-- Volume discounts
-- Annual contracts
+Consumer plans include monthly and yearly subscriptions with standard and VoxerAI variants. Enterprise plans use custom pricing with seat-based licensing, volume discounts, and annual contracts.
 
 ## Stripe Integration
 
-### Dependencies
-- `stripe` npm package (v4.12.0)
-- Stripe API keys
-- Webhook endpoints
-
-### Stripe Objects
-- **Customers** - Stripe customer records
-- **Payment Methods** - Saved cards/payment methods
-- **Subscriptions** - Recurring billing
-- **Invoices** - Billing documents
-- **Charges** - Individual payments
-- **Refunds** - Payment reversals
-
-### Webhook Handling
-Processes Stripe webhooks for:
-- Successful payments
-- Failed payments
-- Subscription updates
-- Customer updates
-- Dispute notifications
+The service uses the Stripe npm package and manages Stripe customers, payment methods, subscriptions, invoices, charges, and refunds. It processes webhooks for payment events, subscription updates, customer updates, and dispute notifications.
 
 ## API Surface
 
-HTTP endpoints for:
-- Create subscription
-- Update subscription
-- Cancel subscription
-- Add payment method
-- Process one-time payment
-- Get billing history
-- Download invoice
-- Update billing information
-
-## Payment Flows
-
-### New Subscription
-1. Client selects plan
-2. PBR creates Stripe customer
-3. Attach payment method
-4. Create Stripe subscription
-5. Activate premium features
-6. Send confirmation
-
-### Subscription Renewal
-1. Stripe attempts charge
-2. Webhook notifies PBR
-3. Update subscription status
-4. Extend premium access
-5. Send receipt
-
-### Failed Payment
-1. Stripe webhook on failure
-2. Update subscription to past_due
-3. Send payment failure notice
-4. Retry payment per policy
-5. Downgrade features after grace period
+The service provides HTTP endpoints for subscription operations, payment method management, one-time payments, billing history retrieval, invoice downloads, and billing information updates.
 
 ## Feature Access Control
 
-The PBR service provides APIs for other services to check premium feature access:
-- Is user subscribed?
-- What plan is user on?
-- Which features are enabled?
-- Trial status and expiration
+The service provides APIs for checking subscription status, identifying user plans, determining enabled features, and verifying trial status and expiration.
 
 ## Business Logic
 
-1. **Trial Management**
-   - Free trial periods
-   - Trial to paid conversion
-   - Trial expiration handling
-
-2. **Proration**
-   - Calculate prorated charges
-   - Plan upgrade credits
-   - Plan downgrade handling
-
-3. **Revenue Recognition**
-   - Deferred revenue tracking
-   - Revenue reporting
-   - Tax calculation support
+The service manages trial periods and conversion to paid plans. It calculates prorated charges for plan changes. It tracks deferred revenue and supports tax calculation.
 
 ## Configuration
 
-Key settings:
-- Stripe API keys (production/test)
-- Webhook signing secrets
-- Plan definitions and pricing
-- Trial period duration
-- Grace period for failed payments
-
-## Scaling Characteristics
-
-- Moderate traffic volume
-- Critical for revenue
-- Must handle payment spikes (e.g., new feature launches)
-- Requires high availability
-- Idempotency for payment operations
+Key configuration parameters include Stripe API keys for production and test environments, webhook signing secrets, plan definitions and pricing, trial period duration, and grace periods for failed payments.
 
 ## Dependencies
 
-- **Stripe API** - Payment processing
-- **Header Store** - User subscription status
-- **Email Service** - Receipts and notifications
-- **Business API** - Enterprise billing
-- **Metrics Service** - Revenue analytics
+The service integrates with the Stripe API for payment processing, Header Store for subscription status, Email Service for receipts and notifications, Business API for enterprise billing, and Metrics Service for revenue analytics.
 
 ## Security Considerations
 
-1. **PCI Compliance**
-   - Never store raw card data
-   - Use Stripe for card storage
-   - Secure API key management
-
-2. **Webhook Verification**
-   - Verify Stripe webhook signatures
-   - Prevent replay attacks
-   - Idempotent processing
-
-3. **Sensitive Data**
-   - Encrypt payment metadata
-   - Audit all payment operations
-   - Restrict access to financial data
-
-## Code Location
-
-**Repository**: `https://github.com/voxer/server`
-**Directory**: `pbr/`
-**Main Service**: `pbr/pbr.js`
-**Invoicer**: `pbr/invoicer.js`
+The service maintains PCI compliance by using Stripe for card storage and never storing raw card data. It verifies webhook signatures to prevent replay attacks and implements idempotent processing. Payment metadata is encrypted, all payment operations are audited, and access to financial data is restricted.

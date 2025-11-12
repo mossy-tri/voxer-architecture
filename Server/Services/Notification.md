@@ -1,133 +1,52 @@
 # Notification Service (NMN)
 
+**Repository**: `https://github.com/voxer/server`
+**Location**: `notification/notification_server.js`
+
 ## Overview
 
-The Notification Service manages push notifications to mobile and desktop clients, including APNS (Apple Push Notification Service) for iOS and FCM/GCM (Firebase Cloud Messaging/Google Cloud Messaging) for Android.
+The Notification Service manages push notifications to mobile and desktop clients. It handles APNS for iOS and FCM/GCM for Android platforms.
 
-## Entry Point
+## Push Notification Delivery
 
-- **Main File**: `notification/notification_server.js`
-- **Service Type**: `nmn`
-- **Base Class**: Extends `VoxerService`
+The service sends notifications to iOS clients via APNS, Android clients via FCM/GCM, web browsers, and desktop applications. It processes notifications asynchronously and maintains connection pools to platform providers.
 
-## Key Responsibilities
+## Device Token Management
 
-1. **Push Notification Delivery**
-   - iOS push notifications via APNS
-   - Android push notifications via FCM/GCM
-   - Web push notifications
-   - Desktop notifications
+The service registers device tokens, updates device token mappings, removes invalid or expired tokens, and tracks tokens per user and device.
 
-2. **Device Token Management**
-   - Register device tokens
-   - Update device token mappings
-   - Remove invalid/expired tokens
-   - Track token per user/device
+## Notification Formatting
 
-3. **Notification Formatting**
-   - Platform-specific payload formatting
-   - Localization of notification text
-   - Badge count management
-   - Sound and alert customization
+The service formats payloads for each platform, localizes notification text, manages badge counts, and customizes sounds and alerts.
 
-4. **Delivery Tracking**
-   - Track delivery status
-   - Handle feedback from APNS/FCM
-   - Retry failed deliveries
-   - Invalid token cleanup
+## Delivery Tracking
+
+The service tracks delivery status, processes feedback from APNS and FCM, retries failed deliveries, and removes invalid tokens based on platform feedback.
 
 ## Push Notification Platforms
 
-### Apple Push Notification Service (APNS)
-- Production and sandbox environments
-- Certificate-based authentication
-- HTTP/2 protocol
-- Priority and expiration settings
-
-### Firebase Cloud Messaging (FCM)
-- Replaces legacy GCM
-- Token-based authentication
-- Topic and group messaging
-- Analytics integration
+APNS operates in production and sandbox environments using certificate-based authentication over HTTP/2. FCM uses token-based authentication and provides topic and group messaging with analytics integration.
 
 ## Notification Types
 
-1. **Message Notifications**
-   - New message alerts
-   - Sender information
-   - Message preview (if enabled)
-   - Conversation context
-
-2. **System Notifications**
-   - Contact requests
-   - Group invitations
-   - Mentions and replies
-   - Account alerts
-
-3. **Engagement Notifications**
-   - Promotional messages
-   - Feature announcements
-   - Re-engagement campaigns
+Message notifications include new message alerts, sender information, message previews, and conversation context. System notifications include contact requests, group invitations, mentions, replies, and account alerts. Engagement notifications include promotional messages, feature announcements, and re-engagement campaigns.
 
 ## API Surface
 
-HTTP endpoints for:
-- Send notification
-- Register device token
-- Unregister device token
-- Update notification preferences
-- Batch notification sending
-
-## Performance Characteristics
-
-- High throughput (thousands of notifications per second)
-- Asynchronous processing
-- Connection pooling to APNS/FCM
-- Queue-based delivery
-
-## Configuration
-
-Key configuration parameters:
-- APNS certificates and keys
-- FCM API keys
-- Connection pool sizes
-- Retry policies
-- Rate limits per platform
+The service provides HTTP endpoints for sending notifications, registering device tokens, unregistering device tokens, updating notification preferences, and batch notification sending.
 
 ## Error Handling
 
-1. **Invalid Tokens**
-   - Detect and remove invalid device tokens
-   - Handle token migration (iOS/Android)
-   - Notify upstream services of invalid tokens
+The service detects and removes invalid device tokens, handles token migration, and notifies upstream services. It retries failed deliveries with exponential backoff, implements circuit breakers for platform outages, and validates payload sizes to respect platform rate limits.
 
-2. **Delivery Failures**
-   - Retry with exponential backoff
-   - Circuit breaker for platform outages
-   - Fallback strategies
+## Configuration
 
-3. **Platform Limits**
-   - Respect APNS/FCM rate limits
-   - Payload size validation
-   - Throttling strategies
-
-## Scaling Characteristics
-
-- Horizontally scalable
-- Stateless processing
-- Can partition by platform
-- Queue-based for load smoothing
+Key configuration parameters include APNS certificates and keys, FCM API keys, connection pool sizes, retry policies, and rate limits per platform.
 
 ## Dependencies
 
-- APNS HTTP/2 API
-- Firebase Cloud Messaging API
-- Header Store (for user/device data)
-- Localization service
-- Metrics service
+The service integrates with APNS HTTP/2 API, Firebase Cloud Messaging API, Header Store for user and device data, localization service, and metrics service.
 
-## Code Location
+## Scaling Characteristics
 
-**Repository**: `https://github.com/voxer/server`
-**Directory**: `notification/`
-**Entry Point**: `notification/notification_server.js`
+The service is horizontally scalable and stateless. Processing can be partitioned by platform. Queues smooth load distribution.

@@ -1,207 +1,68 @@
 # Web Client Service
 
+**Repository**: `https://github.com/voxer/server`
+**Location**: `webclient/`
+
 ## Overview
 
-The Web Client Service serves the browser-based Voxer web application. It provides the static assets, HTML, JavaScript, and CSS for the web interface, as well as server-side rendering and web-specific APIs.
+The Web Client Service serves the browser-based Voxer web application. It provides static assets, HTML, JavaScript, and CSS for the web interface, along with server-side rendering and web-specific APIs.
 
-## Entry Point
+## Static Asset Serving
 
-- **Main File**: `webclient/webclient.js`
-- **Service Type**: `webclient`
-- **Base Class**: Extends `VoxerService`
+The service serves HTML pages, JavaScript bundles, CSS stylesheets, images, icons, and web fonts to client browsers.
 
-## Key Responsibilities
+## Web Application
 
-1. **Static Asset Serving**
-   - Serve HTML pages
-   - JavaScript bundles
-   - CSS stylesheets
-   - Images and icons
-   - Web fonts
+The service hosts a single-page application with client-side routing. The application establishes WebSocket connections to Node Router for real-time messaging in the browser.
 
-2. **Web Application**
-   - Single-page application (SPA)
-   - Client-side routing
-   - WebSocket connections to Node Router
-   - Real-time messaging in browser
+## Server-Side Features
 
-3. **Server-Side Features**
-   - Session management
-   - Authentication redirect
-   - Deep link handling
-   - Share link previews
+The service manages user sessions, handles authentication redirects, processes deep links, and generates share link previews.
 
-4. **Deployment Management**
-   - Git-based deployment
-   - Version updates
-   - Cache busting
+## Deployment
 
-## Web Client Architecture
+The service uses git-based deployment with automated updates through `git_pull_service.js`. It supports version management, cache busting for assets, and rollback capabilities.
 
-### Frontend
-- Modern JavaScript framework (React/Vue/Angular likely)
-- WebSocket for real-time communication
-- Local storage for offline support
-- Service workers for PWA features
+## Architecture
 
-### Backend (This Service)
-- Express.js web server
-- Static file serving
-- Proxy to API services
-- WebSocket upgrade handling
-
-## Deployment Features
-
-### Git-Based Deployment
-- **`git_pull_service.js`** - Automated git pull for updates
-- Pull latest web client code
-- Trigger rebuild if needed
-- Zero-downtime deployments
-
-### Version Management
-- Cache busting for assets
-- Version-based URLs
-- Rollback capabilities
-- A/B testing support
+The frontend uses JavaScript with WebSocket for real-time communication, local storage for offline support, and service workers for PWA features. The backend runs an Express.js web server for static file serving, proxying to API services, and WebSocket upgrade handling.
 
 ## Integration with Node Router
 
-The web client connects to Node Router for:
-- User authentication
-- WebSocket connections
-- Message sending/receiving
-- Media upload/download
-- API calls
-
-## Browser Support
-
-Likely supports:
-- Modern Chrome
-- Firefox
-- Safari
-- Edge
-- Mobile browsers (iOS Safari, Chrome Mobile)
+The web client connects to Node Router for user authentication, WebSocket connections, message sending and receiving, media upload and download, and API calls.
 
 ## Features
 
-### Core Messaging
-- Send/receive messages
-- Voice message playback
-- Image/video viewing
-- Message history
-
-### Web-Specific Features
-- Desktop notifications
-- Keyboard shortcuts
-- Multi-tab synchronization
-- Copy/paste media
-- Drag-and-drop uploads
-
-### Progressive Web App (PWA)
-- Offline support
-- Add to home screen
-- Background sync
-- Push notifications
+The service provides core messaging functions including message send and receive, voice message playback, image and video viewing, and message history. Web-specific features include desktop notifications, keyboard shortcuts, multi-tab synchronization, copy and paste media, and drag-and-drop uploads. PWA features include offline support, add to home screen, background sync, and push notifications.
 
 ## API Surface
 
-HTTP endpoints for:
-- Serve web application
-- Asset delivery
-- Authentication callbacks
-- Deep link routing
-- Share previews
-
-## Configuration
-
-Key settings:
-- Static asset paths
-- CDN configuration
-- WebSocket endpoints
-- API proxy settings
-- Feature flags for web
+The service provides HTTP endpoints for serving the web application, asset delivery, authentication callbacks, deep link routing, and share previews.
 
 ## Third-Party Integrations
 
-### Clearbit Proxy
-- **`webserver/proxy_to_clearbit.js`** - Proxy for Clearbit API
-- Company data enrichment
-- Logo fetching
-- Contact information
+The service includes `webserver/proxy_to_clearbit.js` for proxying Clearbit API requests. This integration provides company data enrichment, logo fetching, and contact information.
 
-## Performance Optimization
+## Performance
 
-1. **Asset Optimization**
-   - Minification
-   - Compression (gzip/brotli)
-   - Code splitting
-   - Lazy loading
-
-2. **Caching**
-   - Browser caching headers
-   - CDN caching
-   - Service worker caching
-   - Version-based cache invalidation
-
-3. **Loading Performance**
-   - Critical CSS inlining
-   - Async script loading
-   - Preloading key resources
-   - Image optimization
+The service implements asset minification, compression, code splitting, and lazy loading. It configures browser caching headers, CDN caching, service worker caching, and version-based cache invalidation. It uses critical CSS inlining, async script loading, preloading for key resources, and image optimization.
 
 ## Security
 
-1. **Content Security Policy**
-   - CSP headers
-   - XSS protection
-   - Frame ancestors policy
-
-2. **HTTPS**
-   - TLS/SSL required
-   - HSTS headers
-   - Secure cookies
-
-3. **Authentication**
-   - OAuth flows
-   - Session cookies
-   - CSRF protection
-   - Token refresh
+The service implements Content Security Policy headers, XSS protection, and frame ancestors policy. It requires TLS/SSL with HSTS headers and secure cookies. Authentication uses OAuth flows, session cookies, CSRF protection, and token refresh.
 
 ## Monitoring
 
-Track:
-- Page load times
-- JavaScript errors
-- WebSocket connection stability
-- API latency from browser
-- User engagement metrics
+The service tracks page load times, JavaScript errors, WebSocket connection stability, API latency from browser, and user engagement metrics.
 
 ## Scaling Characteristics
 
-- Stateless (can scale horizontally)
-- CDN for asset delivery
-- Multiple instances for redundancy
-- Health checks for load balancing
+The service is stateless and can scale horizontally. It uses CDN for asset delivery and supports multiple instances for redundancy with health checks for load balancing.
 
 ## Dependencies
 
-- Node Router (WebSocket and API)
-- Authentication Service
-- CDN for asset delivery
-- Static asset build pipeline
+The service depends on Node Router for WebSocket and API, the Authentication Service, CDN for asset delivery, and a static asset build pipeline.
 
-## Development Workflow
+## Configuration
 
-1. Frontend code in separate repository (likely)
-2. Build process generates static assets
-3. Assets deployed to webclient service
-4. Git pull service updates code
-5. Restart or hot reload
-
-## Code Location
-
-**Repository**: `https://github.com/voxer/server`
-**Directory**: `webclient/`
-**Main Service**: `webclient/webclient.js`
-**Git Deployment**: `webclient/git_pull_service.js`
-**Related**: `webserver/` directory for additional web serving utilities
+Key configuration parameters include static asset paths, CDN configuration, WebSocket endpoints, API proxy settings, and feature flags.

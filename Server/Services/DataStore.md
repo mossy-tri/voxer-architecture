@@ -1,191 +1,52 @@
 # Data Store Service
 
+**Repository**: `https://github.com/voxer/server`
+**Location**: `data_store/`
+
 ## Overview
 
-The Data Store Service provides a general-purpose abstraction layer for data storage and retrieval. It offers a unified interface to various backend storage systems and handles data encoding, caching, and access patterns.
+The Data Store Service provides an abstraction layer for data storage and retrieval. It offers a unified interface to various backend storage systems and handles data encoding, caching, and access patterns.
 
-## Entry Point
+## Storage Abstraction
 
-- **Main File**: `data_store/data_store.js`
-- **Service Type**: `datastore`
-- **Base Class**: Extends `VoxerService`
-
-## Key Responsibilities
-
-1. **Storage Abstraction**
-   - Unified API for different storage backends
-   - Pluggable storage adapters
-   - Consistent data access patterns
-   - Error handling and retries
-
-2. **Data Encoding/Decoding**
-   - Custom binary encoding formats
-   - Compression
-   - Serialization/deserialization
-   - Schema evolution
-
-3. **Caching Layer**
-   - Multi-tier caching
-   - Cache invalidation
-   - Read-through/write-through patterns
-   - Cache warming
-
-4. **Data Access Patterns**
-   - CRUD operations
-   - Batch operations
-   - Range queries
-   - Atomic operations
+The service provides a unified API for different storage backends through pluggable storage adapters. It implements consistent data access patterns and handles errors and retries across backends.
 
 ## Storage Backends
 
-The Data Store can interface with:
-- **Riak** - Distributed key-value store
-- **PostgreSQL** - Relational database
-- **Redis** - In-memory cache
-- **Local filesystem** - Disk storage
+The service interfaces with Riak for distributed key-value storage, PostgreSQL for relational data, Redis for in-memory caching, and the local filesystem for disk storage.
 
 ## Data Encoding
 
-### Binary Encoder
-- **`encoder/bin/decode.js`** - Binary decoding utility
-- Custom binary formats for efficiency
-- Backward compatibility
-- Schema versioning
+The service implements custom binary encoding formats for data serialization. It includes compression, schema versioning, and backward compatibility. The binary encoder provides compact representation, fast encoding and decoding, type preservation, and null handling.
 
-### Features
-- Compact binary representation
-- Fast encoding/decoding
-- Type preservation
-- Null handling
+## Caching
 
-## Use Cases
+The service implements multi-tier caching with cache invalidation and read-through/write-through patterns. The read path checks local cache, then distributed cache, then primary storage. The write path updates primary storage and invalidates or updates caches.
 
-### Generic Data Storage
-Services use Data Store for:
-- User-generated content
-- Application state
-- Configuration data
-- Cached computations
-- Session data
+## Data Access
 
-### Data Models
-Located in `data_models/` directory, the Data Store may handle:
-- User profiles
-- Message metadata
-- Media references
-- Relationships
-- Settings
-
-## API Surface
-
-Provides APIs for:
-- **Put** - Store data
-- **Get** - Retrieve data
-- **Delete** - Remove data
-- **Batch operations** - Multiple operations in one call
-- **Query** - Search and filter data
-- **Atomic updates** - Compare-and-swap operations
-
-## Caching Strategy
-
-### Read Path
-1. Check local cache
-2. Check distributed cache (Redis)
-3. Read from primary storage
-4. Populate caches on miss
-
-### Write Path
-1. Write to primary storage
-2. Invalidate or update caches
-3. Optionally write to cache
-4. Asynchronous replication
-
-## Performance Characteristics
-
-- Optimized for common access patterns
-- Caching reduces backend load
-- Batch operations for efficiency
-- Connection pooling
-- Async I/O
+The service provides CRUD operations, batch operations, range queries, and atomic operations. It supports put, get, delete, and batch operations through its API. Query operations include search and filtering. Atomic updates use compare-and-swap operations.
 
 ## Consistency Model
 
-- **Strong consistency** - For critical data (via PostgreSQL)
-- **Eventual consistency** - For less critical data (via Riak)
-- **Cache consistency** - TTL-based or invalidation-based
+The service supports strong consistency for critical data through PostgreSQL and eventual consistency for less critical data through Riak. Cache consistency uses TTL-based or invalidation-based approaches.
 
 ## Data Partitioning
 
-- Partition by user ID
-- Partition by data type
-- Consistent hashing
-- Automatic rebalancing
+The service partitions data by user ID and data type. It uses consistent hashing and automatic rebalancing for distribution.
 
 ## Error Handling
 
-1. **Retries**
-   - Automatic retry for transient failures
-   - Exponential backoff
-   - Circuit breaker pattern
-
-2. **Fallbacks**
-   - Degrade gracefully
-   - Serve stale cache on backend failure
-   - Queue writes for later
-
-3. **Monitoring**
-   - Error rates per backend
-   - Latency percentiles
-   - Cache hit rates
+The service implements automatic retry for transient failures with exponential backoff and circuit breaker patterns. It degrades gracefully by serving stale cache on backend failure and queuing writes for later processing.
 
 ## Configuration
 
-Key settings:
-- Backend connection strings
-- Connection pool sizes
-- Cache TTLs
-- Retry policies
-- Timeout values
-- Consistency levels
-
-## Integration Points
-
-All services can use Data Store:
-- Node Router
-- Header Store
-- Business API
-- Growth Service
-- Contact Service
+Key configuration parameters include backend connection strings, connection pool sizes, cache TTLs, retry policies, timeout values, and consistency levels.
 
 ## Observability
 
-Metrics tracked:
-- Request latency
-- Cache hit/miss rates
-- Backend error rates
-- Throughput
-- Queue depths
+The service tracks request latency, cache hit and miss rates, backend error rates, throughput, and queue depths.
 
 ## Scaling Characteristics
 
-- Horizontally scalable
-- Stateless service layer
-- Backend-dependent scaling
-- Can shard by key ranges
-- Read replicas for read-heavy workloads
-
-## Data Migration
-
-Support for:
-- Schema migrations
-- Data format upgrades
-- Backend migrations
-- Zero-downtime migrations
-
-## Code Location
-
-**Repository**: `https://github.com/voxer/server`
-**Directory**: `data_store/`
-**Main Service**: `data_store/data_store.js`
-**Encoder**: `data_store/encoder/bin/decode.js`
-**Models**: `data_models/` directory
+The service is horizontally scalable with a stateless service layer. Scaling depends on the backend storage systems. It supports sharding by key ranges and read replicas for read-heavy workloads.
